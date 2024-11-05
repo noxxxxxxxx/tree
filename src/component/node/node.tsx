@@ -56,106 +56,99 @@ const Node: FC<Props & NodeProps & ConfigProps> = (props): ReactElement => {
   })
 
   return (
-    <div
-      className="node-item"
-      key={node[key] as string}
-    >
+    <>
       <div
-        className="node-info"
-        data-id={node[key]}
-        data-root={node.root}
-        data-lock={node.lock}
-        data-hidden={node.hidden}
-        data-anchor={node.anchor}
-        data-expand={node.expand}
-        data-index={parentCount - index!}
+        className="node-item"
+        key={node[key] as string}
       >
         <div
-          className={`node-label ${node?.selected ? 'selected' : ''} ${node?.edit ? 'edit' : ''}`}
-          style={{ color: node.hidden ? '#bebebe' : 'inherit' }}
-          draggable={!node.root && !node.lock && draggable}
-          onDragStart={(e) => dragStart(e, node.id!, node.anchor!, parentCount - index)}
-          onDragEnter={(e) => dragEnter(e, node.anchor!)}
-          onDragOver={(e) =>
-            dragOver(
-              e,
-              node.root!,
-              node.slot!,
-              node.id!,
-              node.anchor!,
-              parentCount - index,
-              node?.children?.length || 0,
-            )
-          }
-          onDragLeave={(e) => dragLeave(e, node.anchor!)}
-          onDragEnd={(e) => dragEnd(e, node.anchor!)}
-          onDrop={(e) => drop(e, node.root!, node.anchor!)}
-          onMouseDown={(e) => mouseDown(e, node.id, node.anchor, index)}
+          className="node-info"
+          data-id={node[key]}
+          data-root={node.root}
+          data-lock={node.lock}
+          data-hidden={node.hidden}
+          data-anchor={node.anchor}
+          data-expand={node.expand}
+          data-index={parentCount - index!}
         >
-          <Indent
-            node={node}
-            virtual={true}
-            indent={indent}
-          />
-          {checkable && (
-            <CheckBox
-              name={node.anchor!.join()}
+          <div
+            className={`node-label ${node?.selected ? 'selected' : ''} ${node?.edit ? 'edit' : ''}`}
+            style={{ color: node.hidden ? '#bebebe' : 'inherit' }}
+            draggable={!node.root && !node.lock && draggable}
+            onDragStart={(e) => dragStart(e, node.id!, node.anchor!, parentCount - index)}
+            onDragEnter={(e) => dragEnter(e, node.anchor!)}
+            onDragOver={(e) =>
+              dragOver(
+                e,
+                node.root!,
+                node.slot!,
+                node.id!,
+                node.anchor!,
+                parentCount - index,
+                node?.children?.length || 0,
+              )
+            }
+            onDragLeave={(e) => dragLeave(e, node.anchor!)}
+            onDragEnd={(e) => dragEnd(e, node.anchor!)}
+            onDrop={(e) => drop(e, node.root!, node.anchor!)}
+            onMouseDown={(e) => mouseDown(e, node.id, node.anchor, index)}
+          >
+            <Indent
               node={node}
+              virtual={true}
+              indent={indent}
+            />
+            {checkable && (
+              <CheckBox
+                name={node.anchor!.join()}
+                node={node}
+              />
+            )}
+            <div className="node-name">
+              <Icon
+                Icom={icon || node.icon}
+                node={node}
+              />
+              <span>
+                <Highlight
+                  list={title}
+                  keywords={searchValue}
+                  matchStyle={{ color: 'rgb(255,82,82)' }}
+                />
+              </span>
+            </div>
+          </div>
+          <div className="fold-wrap">
+            <Indent
+              node={node}
+              virtual={false}
+              indent={indent}
+              expand={action.expand}
+              loadData={loadData}
+              switcherIcon={switcherIcon}
+            />
+          </div>
+          {!node.root && (
+            <Action
+              node={node}
+              lock={lock}
+              hidden={hidden}
+              prevent={prevent}
             />
           )}
-          <div className="node-name">
-            <Icon
-              Icom={icon || node.icon}
-              node={node}
-            />
-            <span>
-              <Highlight
-                list={title}
-                keywords={searchValue}
-                matchStyle={{ color: 'rgb(255,82,82)' }}
-              />
-            </span>
-          </div>
         </div>
-        <div className="fold-wrap">
-          <Indent
-            node={node}
-            virtual={false}
-            indent={indent}
-            expand={action.expand}
-            loadData={loadData}
-            switcherIcon={switcherIcon}
-          />
-        </div>
-        {!node.root && (
-          <Action
-            node={node}
-            lock={lock}
-            hidden={hidden}
-            prevent={prevent}
-          />
-        )}
       </div>
-      {childrenNodes && (
-        <div
-          className="node-children"
-          style={{
-            color: node.hidden ? '#bebebe' : 'inherit',
-          }}
-        >
-          {childrenNodes.map((childNode: TreeNode, index: number) => (
-            <Node
-              {...props}
-              index={index}
-              node={childNode}
-              indent={indent!.concat([0])}
-              parentCount={(childNode[children] as TreeNode[]).length - 1}
-              key={childNode[key] as string}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+      {childrenNodes?.map((child: TreeNode, index: number) => (
+        <Node
+          {...props}
+          index={index}
+          node={child}
+          indent={indent!.concat([0])}
+          parentCount={(child[children] as TreeNode[]).length - 1}
+          key={child[key] as string}
+        />
+      ))}
+    </>
   )
 }
 
